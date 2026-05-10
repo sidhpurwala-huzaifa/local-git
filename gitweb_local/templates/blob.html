@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ path }} · {{ repo_name }}{% endblock %}
+{% block body %}
+  <div class="breadcrumb">
+    <a href="{{ url_for('tree', ref=ref, path='') }}">{{ repo_name }}</a>
+    {% for label, tp in blob_crumbs %}
+      {% if tp is not none %}
+        / <a href="{{ url_for('tree', ref=ref, path=tp) }}">{{ label }}</a>
+      {% else %}
+        / {{ label }}
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="banner">
+    <a href="{{ url_for('tree', ref=ref, path=parent_folder) }}">↑ Back to folder</a>
+    {% if truncated %}
+      &nbsp;·&nbsp; Preview shows the beginning of this file only (large file, {{ size }} bytes total)
+    {% endif %}
+  </div>
+  <div class="panel">
+    <div class="meta">
+      {{ path }} ·
+      {% if render_markdown %}Markdown{% elif kind == 'text' %}text{% else %}binary{% endif %}
+      · {{ size }} bytes
+      {% if render_markdown %}
+        · <a href="{{ url_for('raw_blob', ref=ref, path=path) }}">View raw</a>
+      {% endif %}
+    </div>
+    {% if render_markdown and html_body is not none %}
+      <article class="markdown-body">{{ html_body | safe }}</article>
+    {% elif kind == 'text' and text is not none %}
+      <pre class="code">{{ text }}</pre>
+    {% else %}
+      <pre class="code">Binary file (not rendered).</pre>
+    {% endif %}
+  </div>
+{% endblock %}

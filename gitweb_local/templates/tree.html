@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ repo_name }} · {{ path or "tree" }}{% endblock %}
+{% block body %}
+  <div class="breadcrumb">
+    <a href="{{ url_for('tree', ref=ref, path='') }}">{{ repo_name }}</a>
+    {% for seg, full in breadcrumbs %}
+      / <a href="{{ url_for('tree', ref=ref, path=full) }}">{{ seg }}</a>
+    {% endfor %}
+  </div>
+  {% if path %}
+    <div class="banner">
+      <a href="{{ url_for('tree', ref=ref, path=parent_path) }}">↑ Parent directory</a>
+    </div>
+  {% endif %}
+  <div class="panel">
+    <table class="files">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th class="size">Size</th>
+          <th class="commit">Object</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in entries %}
+          {% set child = (path ~ '/' ~ e.name) if path else e.name %}
+          <tr>
+            <td>
+              {% if e.kind == 'tree' %}
+                <span class="icon-tree">📁</span>
+                <a href="{{ url_for('tree', ref=ref, path=child) }}">{{ e.name }}</a>
+              {% else %}
+                <span class="icon-blob"></span>
+                <a href="{{ url_for('blob', ref=ref, path=child) }}">{{ e.name }}</a>
+              {% endif %}
+            </td>
+            <td class="size">{% if e.size is not none %}{{ e.size }}{% else %}—{% endif %}</td>
+            <td class="commit"><span class="sha">{{ e.object_id[:7] }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

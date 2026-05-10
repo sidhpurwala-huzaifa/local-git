@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}{{ repo_name }}{% endblock %} · local git</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <div class="brand">{{ repo_name }} <span>· local checkout</span></div>
+        <details class="ref-picker">
+          <summary>Revision: <span class="sha">{{ ref[:7] }}</span></summary>
+          <div class="ref-menu">
+            {% for rname, rsha in refs %}
+              {% if ref_switch == 'commits' %}
+                <a href="{{ url_for('commits', ref=rsha) }}">{{ rname }}</a>
+              {% elif ref_switch == 'blob' %}
+                <a href="{{ url_for('blob', ref=rsha, path=switch_path) }}">{{ rname }}</a>
+              {% elif ref_switch == 'commit' %}
+                <a href="{{ url_for('tree', ref=rsha, path='') }}">{{ rname }}</a>
+              {% else %}
+                <a href="{{ url_for('tree', ref=rsha, path=switch_path or '') }}">{{ rname }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </details>
+      </div>
+      <nav class="tabs">
+        <a
+          class="{% if active_tab == 'code' %}active{% endif %}"
+          href="{{ url_for('tree', ref=ref, path='') }}"
+          >Code</a
+        >
+        <a
+          class="{% if active_tab == 'commits' %}active{% endif %}"
+          href="{{ url_for('commits', ref=ref) }}"
+          >Commits</a
+        >
+      </nav>
+    </header>
+    <main>{% block body %}{% endblock %}</main>
+  </body>
+</html>

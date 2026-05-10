@@ -1,0 +1,373 @@
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --link: #58a6ff;
+  --tree-dir: #79c0ff;
+  --accent: #238636;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.brand span {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.ref-picker {
+  margin-left: auto;
+  position: relative;
+}
+
+.ref-picker summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.ref-picker summary::-webkit-details-marker {
+  display: none;
+}
+
+.ref-menu {
+  position: absolute;
+  right: 0;
+  margin-top: 8px;
+  min-width: 220px;
+  max-height: 280px;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+  z-index: 20;
+}
+
+.ref-menu a {
+  display: block;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  color: var(--text);
+}
+
+.ref-menu a:hover {
+  background: #21262d;
+  text-decoration: none;
+}
+
+nav.tabs {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 4px;
+}
+
+nav.tabs a {
+  display: inline-block;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  color: var(--muted);
+}
+
+nav.tabs a.active {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text);
+  margin-bottom: -1px;
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.breadcrumb {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.breadcrumb a {
+  color: var(--muted);
+}
+
+.breadcrumb a:hover {
+  color: var(--link);
+}
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+table.files {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+table.files th,
+table.files td {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+
+table.files th {
+  color: var(--muted);
+  font-weight: 500;
+  border-top: none;
+  background: rgba(22, 27, 34, 0.6);
+}
+
+table.files td.size {
+  color: var(--muted);
+  width: 90px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+table.files td.commit {
+  width: 100px;
+}
+
+.icon-tree {
+  color: var(--tree-dir);
+}
+
+.icon-blob::before {
+  content: "📄";
+  margin-right: 6px;
+  filter: grayscale(0.3);
+}
+
+pre.code {
+  margin: 0;
+  padding: 16px;
+  overflow: auto;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  white-space: pre;
+  border-top: 1px solid var(--border);
+}
+
+.meta {
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.commit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.commit-list li {
+  border-top: 1px solid var(--border);
+  padding: 12px 14px;
+}
+
+.commit-list li:first-child {
+  border-top: none;
+}
+
+.commit-subject {
+  font-weight: 500;
+}
+
+.commit-meta {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.sha {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+.banner {
+  background: #21262d;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+/* Rendered Markdown (blob view), Git-hosting–style prose */
+.markdown-body {
+  padding: 24px 28px 32px;
+  font-size: 1rem;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.markdown-body > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  margin-top: 1.4em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+  line-height: 1.25;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.25em;
+}
+
+.markdown-body h1 {
+  font-size: 1.65rem;
+}
+
+.markdown-body h2 {
+  font-size: 1.35rem;
+}
+
+.markdown-body h3 {
+  font-size: 1.15rem;
+  border-bottom: none;
+}
+
+.markdown-body p {
+  margin: 0.75em 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  margin: 0.75em 0;
+  padding-left: 1.6em;
+}
+
+.markdown-body li {
+  margin: 0.25em 0;
+}
+
+.markdown-body blockquote {
+  margin: 0.75em 0;
+  padding: 0 0.9em;
+  color: var(--muted);
+  border-left: 4px solid var(--border);
+}
+
+.markdown-body hr {
+  height: 1px;
+  margin: 1.5em 0;
+  border: none;
+  background: var(--border);
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.9rem;
+}
+
+.markdown-body th,
+.markdown-body td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+}
+
+.markdown-body th {
+  background: rgba(22, 27, 34, 0.85);
+  font-weight: 600;
+  text-align: left;
+}
+
+.markdown-body tr:nth-child(even) {
+  background: rgba(22, 27, 34, 0.35);
+}
+
+.markdown-body pre {
+  margin: 1em 0;
+  padding: 14px 16px;
+  overflow: auto;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  background: #0d1117;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.markdown-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+  padding: 0.15em 0.35em;
+  background: rgba(110, 118, 129, 0.2);
+  border-radius: 4px;
+}
+
+.markdown-body pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-body a {
+  color: var(--link);
+}
