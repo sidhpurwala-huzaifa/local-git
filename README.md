@@ -2,7 +2,7 @@
 
 A small **read-only** web UI for a **local git checkout** (for example a clone created with `gh repo clone`). It runs on your machine, uses only `git` subprocess calls against that tree, and does not call external HTTP APIs.
 
-You get a browser experience similar to browsing code on a git host: file tree, blobs, commit history, full `git show` on a commit, and **rendered Markdown** for `.md` / `.markdown` files (with a “View raw” link).
+You get a browser experience similar to browsing code on a git host: file tree, **syntax-highlighted** source files (via **Pygments**), commit history, **colored unified diffs** on each commit, a **Compare** view for any two revisions, **rendered Markdown** for `.md` / `.markdown` files, and a “View raw” link where relevant.
 
 ## Requirements
 
@@ -59,10 +59,11 @@ Mount the checkout **read-only** (`:ro`) when you can.
 | Area | Behavior |
 |------|------------|
 | Tree | Lists directories and files; subdirectory listing uses `git ls-tree` in a way that matches real git semantics. |
-| Blobs | Text shown in a code-style block; binary files are not rendered as text. |
+| Blobs | Recognized source types (e.g. `.py`, `.c`, `.rs`, `.go`, …) are **syntax-highlighted** with line numbers; other text uses a plain block. Binary files are not rendered as text. |
 | Markdown | Files ending in `.md` or `.markdown` are rendered as HTML (fenced code, tables, etc.), sanitized with **nh3**. Large files over the blob preview limit stay as plain text preview. |
-| Raw | `/raw/<ref>/<path>` serves plain text (or octet-stream for non-text). Linked from rendered Markdown as “View raw”. |
-| Commits | Log and per-commit `git show` output. |
+| Raw | `/raw/<ref>/<path>` serves plain text (or octet-stream for non-text). Linked from Markdown and highlighted source blobs. |
+| Commits | Log; each commit shows metadata plus a **colored diff** (Pygments `DiffLexer`, GitHub-dark–style theme). |
+| Compare | **Compare** tab: unified `git diff` between two revisions you enter (branches, tags, or SHAs). |
 | Refs | Branches and tags (resolved to commits) in the header switcher. |
 
 ## Security and privacy

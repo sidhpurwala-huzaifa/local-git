@@ -2,3 +2,4 @@ flask==3.0.3
 werkzeug==3.0.4
 markdown==3.7
 nh3==0.2.19
+pygments==2.18.0

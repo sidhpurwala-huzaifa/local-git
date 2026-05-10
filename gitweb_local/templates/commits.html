@@ -1,19 +1,36 @@
 {% extends "base.html" %}
 {% block title %}Commits · {{ repo_name }}{% endblock %}
 {% block body %}
-  <div class="panel">
-    <ul class="commit-list">
+  <div class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ url_for('tree', ref=ref, path='') }}">{{ repo_name }}</a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="text-muted">commits</span>
+  </div>
+  <div class="Box">
+    <div class="Box-header">
+      <h2 class="Box-title">Commits</h2>
+      <p class="Box-header-subtitle text-small text-muted">Showing the 100 most recent commits for this revision.</p>
+    </div>
+    <div class="Box-body p-0">
+    <ul class="commit-timeline">
       {% for row in rows %}
-        <li>
-          <div class="commit-subject">
-            <a href="{{ url_for('commit', sha=row.sha) }}">{{ row.subject }}</a>
-          </div>
-          <div class="commit-meta">
-            <span class="sha">{{ row.sha[:7] }}</span>
-            · {{ row.author }} · {{ row.date }}
+        <li class="commit-timeline-item">
+          <div class="commit-avatar" aria-hidden="true"></div>
+          <div class="commit-timeline-body">
+            <div class="commit-subject">
+              <a href="{{ url_for('commit', sha=row.sha) }}">{{ row.subject }}</a>
+            </div>
+            <div class="commit-meta text-small text-muted">
+              <code class="blob-oid">{{ row.sha[:7] }}</code>
+              <span class="commit-meta-sep">·</span>
+              {{ row.author }}
+              <span class="commit-meta-sep">·</span>
+              <span class="no-wrap">{{ row.date }}</span>
+            </div>
           </div>
         </li>
       {% endfor %}
     </ul>
+    </div>
   </div>
 {% endblock %}

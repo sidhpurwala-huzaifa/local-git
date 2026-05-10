@@ -208,5 +208,37 @@ def show_commit_full(repo: str, sha: str) -> str:
     return _run(repo, ["show", "--no-color", "--pretty=medium", sha])
 
 
+def show_commit_meta(repo: str, sha: str) -> str:
+    """Commit message and headers only (no patch)."""
+    if len(sha) != 40 or not all(c in "0123456789abcdef" for c in sha):
+        raise GitError("invalid commit")
+    return _run(repo, ["show", "-s", "--no-color", "--pretty=medium", sha])
+
+
+def show_commit_patch(repo: str, sha: str) -> str:
+    """Unified diff for a single commit (``git show -p`` body)."""
+    if len(sha) != 40 or not all(c in "0123456789abcdef" for c in sha):
+        raise GitError("invalid commit")
+    return _run(repo, ["show", "--no-color", "--pretty=format:", "--patch", sha])
+
+
+def diff_commits(repo: str, old_sha: str, new_sha: str) -> str:
+    """Unified diff between two commits (``git diff old new``)."""
+    for s in (old_sha, new_sha):
+        if len(s) != 40 or not all(c in "0123456789abcdef" for c in s):
+            raise GitError("invalid commit")
+    return _run(repo, ["diff", "--no-color", old_sha, new_sha])
+
+
+def parent_commit(repo: str, sha: str) -> str | None:
+    """First parent of *sha*, or None if this is a root commit."""
+    if len(sha) != 40 or not all(c in "0123456789abcdef" for c in sha):
+        return None
+    try:
+        return _run(repo, ["rev-parse", "--verify", f"{sha}^"]).strip()
+    except GitError:
+        return None
+
+
 def short_oid(oid: str, n: int = 7) -> str:
     return oid[:n] if len(oid) >= n else oid

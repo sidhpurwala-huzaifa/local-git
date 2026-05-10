@@ -1,12 +1,51 @@
 {% extends "base.html" %}
 {% block title %}{{ sha[:7] }} · {{ repo_name }}{% endblock %}
 {% block body %}
-  <div class="banner">
-    <a href="{{ url_for('commits', ref=ref) }}">← Back to commits</a>
-    &nbsp;·&nbsp;
-    <a href="{{ url_for('tree', ref=sha, path='') }}">Browse tree at this commit</a>
+  <div class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ url_for('tree', ref=sha, path='') }}">{{ repo_name }}</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="{{ url_for('commits', ref=ref) }}">commits</a>
+    <span class="breadcrumb-sep">/</span>
+    <code class="blob-oid">{{ sha[:7] }}</code>
   </div>
-  <div class="panel">
-    <pre class="code">{{ full }}</pre>
+  <div class="flash flash-warn mb-3">
+    <a href="{{ url_for('commits', ref=ref) }}">View all commits</a>
+    <span class="commit-meta-sep">·</span>
+    <a href="{{ url_for('tree', ref=sha, path='') }}">Browse files</a>
+    {% if parent_sha %}
+      <span class="commit-meta-sep">·</span>
+      <a href="{{ url_for('compare', base=parent_sha, head=sha) }}">Compare with parent</a>
+    {% endif %}
   </div>
+  <div class="Box mb-3">
+    <div class="Box-header">
+      <h2 class="Box-title">Commit message</h2>
+    </div>
+    <div class="Box-body p-0">
+      <pre class="code code-commit">{{ meta }}</pre>
+    </div>
+  </div>
+  {% if diff_html %}
+    <div class="Box">
+      <div class="Box-header d-flex flex-items-center flex-justify-between flex-wrap gap-2">
+        <h2 class="Box-title">Diff</h2>
+        {% if truncated %}
+          <span class="text-small text-muted">Truncated for display</span>
+        {% endif %}
+      </div>
+      <div class="Box-body p-0 diff-panel-outer">
+        <style>{{ diff_css | safe }}</style>
+        {{ diff_html | safe }}
+      </div>
+    </div>
+  {% elif has_patch %}
+    <div class="Box">
+      <div class="Box-header">
+        <h2 class="Box-title">Diff</h2>
+      </div>
+      <div class="Box-body p-0">
+        <pre class="code">{{ patch }}</pre>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}

@@ -1,44 +1,62 @@
 {% extends "base.html" %}
-{% block title %}{{ repo_name }} · {{ path or "tree" }}{% endblock %}
+{% block title %}{{ repo_name }} · {{ path or "src" }}{% endblock %}
 {% block body %}
-  <div class="breadcrumb">
+  <div class="breadcrumb" aria-label="Breadcrumb">
     <a href="{{ url_for('tree', ref=ref, path='') }}">{{ repo_name }}</a>
     {% for seg, full in breadcrumbs %}
-      / <a href="{{ url_for('tree', ref=ref, path=full) }}">{{ seg }}</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="{{ url_for('tree', ref=ref, path=full) }}">{{ seg }}</a>
     {% endfor %}
   </div>
   {% if path %}
-    <div class="banner">
-      <a href="{{ url_for('tree', ref=ref, path=parent_path) }}">↑ Parent directory</a>
+    <div class="flash flash-warn mb-3">
+      <a href="{{ url_for('tree', ref=ref, path=parent_path) }}">..</a>
+      <span class="text-muted">Parent directory</span>
     </div>
   {% endif %}
-  <div class="panel">
-    <table class="files">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th class="size">Size</th>
-          <th class="commit">Object</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for e in entries %}
-          {% set child = (path ~ '/' ~ e.name) if path else e.name %}
+  <div class="Box">
+    <div class="Box-header d-flex flex-items-center flex-justify-between">
+      <h2 class="Box-title">{{ path or repo_name }}</h2>
+      <span class="text-small text-muted font-mono">{{ ref[:7] }}</span>
+    </div>
+    <div class="Box-body p-0">
+      <table class="file-tree" role="treegrid">
+        <thead>
           <tr>
-            <td>
-              {% if e.kind == 'tree' %}
-                <span class="icon-tree">📁</span>
-                <a href="{{ url_for('tree', ref=ref, path=child) }}">{{ e.name }}</a>
-              {% else %}
-                <span class="icon-blob"></span>
-                <a href="{{ url_for('blob', ref=ref, path=child) }}">{{ e.name }}</a>
-              {% endif %}
-            </td>
-            <td class="size">{% if e.size is not none %}{{ e.size }}{% else %}—{% endif %}</td>
-            <td class="commit"><span class="sha">{{ e.object_id[:7] }}</span></td>
+            <th scope="col" class="col-name">Name</th>
+            <th scope="col" class="col-size text-right">Size</th>
+            <th scope="col" class="col-oid text-right">Latest commit</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for e in entries %}
+            {% set child = (path ~ '/' ~ e.name) if path else e.name %}
+            <tr class="file-row">
+              <td class="col-name">
+                {% if e.kind == 'tree' %}
+                  <svg class="icon-svg icon-directory" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3H7.957a.75.75 0 01-.502-.222L6.22 1.75a.75.75 0 00-.502-.222H1.75z"
+                    />
+                  </svg>
+                  <a class="file-link" href="{{ url_for('tree', ref=ref, path=child) }}">{{ e.name }}</a>
+                {% else %}
+                  <svg class="icon-svg icon-file" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75zm1.75-.25a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 00.25-.25V6h-2.75A1.75 1.75 0 019 4.25V1.5H3.75a.25.25 0 00-.25.25zm7.25 3.662V4.25c0-.138.112-.25.25-.25h2.662a.25.25 0 01.177.427l-2.896 2.896a.25.25 0 01-.354 0L8.583 5.427a.25.25 0 010-.354z"
+                    />
+                  </svg>
+                  <a class="file-link" href="{{ url_for('blob', ref=ref, path=child) }}">{{ e.name }}</a>
+                {% endif %}
+              </td>
+              <td class="col-size text-muted text-right">{% if e.size is not none %}{{ e.size }}{% else %}—{% endif %}</td>
+              <td class="col-oid text-right"><code class="blob-oid">{{ e.object_id[:7] }}</code></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 {% endblock %}
