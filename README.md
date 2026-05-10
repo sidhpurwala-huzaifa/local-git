@@ -31,26 +31,28 @@ Build:
 podman build -t local-gitweb -f Containerfile .
 ```
 
-**Linux (recommended):** bind the app to loopback and use host networking so the browser on the same machine can reach it without exposing the app on `0.0.0.0` inside the container.
-
-```bash
-podman run --rm --network host \
-  -v /path/to/your/checkout:/repo:ro,Z \
-  -e REPO_PATH=/repo \
-  -e PORT=8080 \
-  localhost/local-gitweb:latest
-```
-
-**Bridge / `-p` (e.g. Podman Machine on macOS):** forwarded traffic may not reach a listener bound only to `127.0.0.1` inside the container. If the page does not load, bind inside the container and restrict on the host:
+The image defaults to **`HOST=0.0.0.0`** so the server accepts traffic from **published ports** (`-p …`). Restrict access on the **host** with `127.0.0.1` in the publish mapping (recommended):
 
 ```bash
 podman run --rm \
   -p 127.0.0.1:8080:8080 \
   -v /path/to/your/checkout:/repo:ro,Z \
   -e REPO_PATH=/repo \
-  -e HOST=0.0.0.0 \
   localhost/local-gitweb:latest
 ```
+
+**Linux, loopback-only inside the container:** use host networking and bind the app to localhost:
+
+```bash
+podman run --rm --network host \
+  -v /path/to/your/checkout:/repo:ro,Z \
+  -e REPO_PATH=/repo \
+  -e HOST=127.0.0.1 \
+  -e PORT=8080 \
+  localhost/local-gitweb:latest
+```
+
+The image sets **`git config --global safe.directory '*'`** so Git will read volume-mounted checkouts owned by your host user (avoids “dubious ownership” failures in the container).
 
 Mount the checkout **read-only** (`:ro`) when you can.
 
@@ -69,7 +71,7 @@ Mount the checkout **read-only** (`:ro`) when you can.
 ## Security and privacy
 
 - The application does not implement remotes, fetch, or outbound HTTP to third parties.
-- Default listen address for the Python entrypoint is **`127.0.0.1`**. Use host-only port mapping (`127.0.0.1:8080:8080`) on the host when you use bridge networking with `HOST=0.0.0.0`.
+- The **Python CLI** defaults to **`127.0.0.1`**. The **container image** defaults to **`0.0.0.0`** so port publishing works; keep the service local with **`-p 127.0.0.1:8080:8080`** on the host.
 - Markdown is treated as **untrusted**: HTML is sanitized after conversion.
 
 ## Project layout
